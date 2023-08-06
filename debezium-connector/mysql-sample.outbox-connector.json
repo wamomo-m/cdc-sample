@@ -1,0 +1,19 @@
+{
+  "name": "mysql-sample.outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "password",
+    "database.server.id": 2,
+    "table.include.list": "sample.outbox",
+    "topic.prefix": "mysql-sample.outbox",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka-broker:9092",
+    "schema.history.internal.kafka.topic": "mysql-sample.outbox-schema-history",
+    "transforms": "outbox",
+    "transforms.outbox.type":"io.debezium.transforms.outbox.EventRouter",
+    "transforms.outbox.route.by.field": "topic",
+    "transforms.outbox.route.topic.replacement": "$1"
+  }
+}

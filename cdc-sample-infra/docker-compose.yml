@@ -1,0 +1,59 @@
+services:
+  mysql:
+    container_name: cdc-sample.mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
+    volumes:
+      - ./mysql/sql:/docker-entrypoint-initdb.d
+      - ./mysql/conf:/etc/mysql/conf.d
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - mysql-net
+
+  kafka-source-worker:
+    container_name: cdc-sample.kafka-source-worker
+    image: debezium/connect:2.4
+    environment:
+      GROUP_ID: cdc-sample-source
+      CONFIG_STORAGE_TOPIC: cdc-sample-source-config-storage
+      OFFSET_STORAGE_TOPIC: cdc-sample-source-offset-storage
+      STATUS_STORAGE_TOPIC: cdc-sample-source-status-storage
+      BOOTSTRAP_SERVERS: kafka-broker:9092
+    volumes:
+      - type: tmpfs
+        target: /kafka/data
+      - type: tmpfs
+        target: /kafka/logs
+      - type: tmpfs
+        target: /kafka/config
+    ports:
+      - 8083:8083
+    depends_on:
+      - mysql
+    networks:
+      - mysql-net
+      - kafka-net
+
+  kafka-broker:
+    container_name: cdc-sample.kafka-broker
+    image: bitnami/kafka:3.5.1
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: yes
+    ports:
+     - 9092:9092
+    depends_on:
+      - kafka-source-worker
+    networks:
+      - mysql-net
+      - kafka-net
+
+volumes:
+  mysql-data:
+
+networks:
+  mysql-net:
+  kafka-net:
