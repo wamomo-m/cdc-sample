@@ -1,0 +1,11 @@
+CREATE DATABASE `sample`;
+USE `sample`;
+
+CREATE TABLE `outbox` (
+  `id` VARCHAR(100) NOT NULL PRIMARY KEY
+  , `aggregateid` VARCHAR(100) NOT NULL
+  , `topic` VARCHAR(100) NOT NULL
+  , `payload` TEXT NOT NULL
+  , `created_at` TIMESTAMP default CURRENT_TIMESTAMP NOT NULL
+  , `updated_at` TIMESTAMP default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
