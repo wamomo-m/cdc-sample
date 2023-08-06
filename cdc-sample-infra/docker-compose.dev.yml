@@ -1,0 +1,13 @@
+services:
+  kafka-ui:
+    container_name: cdc-sample.kafka-ui
+    image: provectuslabs/kafka-ui:master
+    environment:
+      KAFKA_CLUSTERS_0_NAME: cdc-samle-kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker:9092
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka-broker
+    networks:
+      - kafka-net
